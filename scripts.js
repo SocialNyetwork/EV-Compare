@@ -41,6 +41,7 @@ const unitMap = {
 let carsDatabase = [];
 let loadedCars = [];
 let isKilometers = false;
+let showBest = false;
 
 const appContainer = document.getElementById("appContainer");
 const comparisonContainer = document.getElementById("comparisonContainer");
@@ -48,6 +49,7 @@ const topBar = document.getElementById("topBar");
 const searchInput = document.getElementById("searchInput");
 const searchResults = document.getElementById("searchResults");
 const unitToggle = document.getElementById("unitToggle");
+const bestToggle = document.getElementById("bestToggle");
 
 /*
     This will not work if you are just opening the index.html file.
@@ -82,8 +84,31 @@ unitToggle.onchange = (e) => {
     renderComparison();
 };
 
+bestToggle.onchange = (e) => {
+    showBest = e.target.checked;
+    renderComparison();
+};
+
 function renderComparison() {
     comparisonContainer.innerHTML = "";
+    
+    let bestValues = {};
+    if (showBest && loadedCars.length > 1) {
+        loadedCars[0].specs.forEach(spec => {
+            let maxVal = -Infinity;
+            loadedCars.forEach(c => {
+                let s = c.specs.find(x => x.label === spec.label);
+                if (s) {
+                    let num = parseFloat(s.value);
+                    if (!isNaN(num) && num > maxVal) {
+                        maxVal = num;
+                    }
+                }
+            });
+            bestValues[spec.label] = maxVal;
+        });
+    }
+
     loadedCars.forEach(car => {
         const card = document.createElement("div");
         card.className = "carCard";
@@ -113,7 +138,15 @@ function renderComparison() {
             }
             
             value.textContent = finalValue + finalUnit;
-            value.style.color = white;
+            
+            const numVal = parseFloat(spec.value);
+            if (showBest && loadedCars.length > 1 && !isNaN(numVal) && numVal === bestValues[spec.label]) {
+                value.style.color = harvestOrange;
+                value.style.fontWeight = "bold";
+            } else {
+                value.style.color = white;
+                value.style.fontWeight = "normal";
+            }
             
             row.appendChild(label);
             row.appendChild(value);
