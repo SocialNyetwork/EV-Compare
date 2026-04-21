@@ -1,70 +1,174 @@
-html,
 body {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
 }
 
-.main-header {
-  background-color: rgba(0, 0, 0, 0.3);
-  padding-bottom: 10px;
+#topBar {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 40px;
 }
 
-.title {
-  text-align: center;
-  margin: 0;
-  font-size: 8em;
-  font-family: "Helvetica";
-  font-weight: normal;
-  color: rgb(0, 0, 0);
+#searchContainer {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
 }
 
-#card-container {
-  display: flex;
-  justify-content: center;
-  margin: 20px;
+#searchInput {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-.card {
-  width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 5px;
+#searchResults {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
-.card-content {
-  padding: 20px;
-  font-family: "Verdana";
-  color: #777;
+.searchResultItem {
+    padding: 12px 15px;
+    cursor: pointer;
 }
 
-.card-content h2 {
-  margin-top: 0;
-  font-size: 20px;
+#unitToggleContainer {
+    display: flex;
+    align-items: center;
 }
 
-.card img {
-  width: 100%;
-  height: auto;
+.toggleLabel {
+    color: #FFFFFF;
+    font-size: 16px;
+    margin: 0 10px;
+    font-weight: bold;
 }
 
-.footer {
-  display: flex;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 10px;
+/* I took this switch element from https://www.w3schools.com/howto/howto_css_switch.asp */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
 }
 
-button {
-  text-align: center;
-  background-color: #666;
-  border: none;
-  padding-left: 10px;
-  padding-right: 10px;
-  height: 40px;
-  border-radius: 10px;
-  color: white;
-  font-size: 22px;
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
   cursor: pointer;
-  margin: 5px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333333;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: #FFFFFF;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #F17300;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+#appContainer {
+    display: flex;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-x: auto;
+}
+
+#comparisonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.carCard {
+    position: relative;
+    border-radius: 12px;
+    padding: 15px 25px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}
+
+.carCard h2 {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    margin-right: 25px;
+    font-size: 22px;
+}
+
+.specRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 15px;
+}
+
+.removeCarBtn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.hidden {
+    display: none !important;
 }
