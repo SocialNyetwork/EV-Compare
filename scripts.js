@@ -42,6 +42,66 @@ let carsDatabase = [];
 let loadedCars = [];
 let isKilometers = false;
 let showBest = false;
+let activeRenderers = [];
+
+// I could have used static images but I thought this would be cooler. Not super performant tho
+function init3DModel(container, modelName) {
+    const scene = new THREE.Scene();
+    scene.background = null;
+    
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5, 10, 7.5);
+    scene.add(dirLight);
+
+    const width = container.clientWidth || 270;
+    const height = container.clientHeight || 250;
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(0, 1.5, 5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setClearColor(0x000000, 0);
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.enablePan = false;
+    controls.minDistance = 2;
+    controls.maxDistance = 10;
+
+    let modelObject = null;
+    const loader = new THREE.GLTFLoader();
+    loader.load(`assets/models/${modelName}/scene.gltf`, function(gltf) {
+        modelObject = gltf.scene;
+        
+        const box = new THREE.Box3().setFromObject(modelObject);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 3.5 / maxDim;
+        modelObject.scale.setScalar(scale);
+        
+        modelObject.position.sub(center.multiplyScalar(scale));
+        modelObject.position.y -= size.y * scale * 0.2;
+        
+        scene.add(modelObject);
+    });
+
+    let requestID;
+    function animate() {
+        requestID = requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    activeRenderers.push({ renderer, requestID });
+}
 
 const appContainer = document.getElementById("appContainer");
 const comparisonContainer = document.getElementById("comparisonContainer");
@@ -114,6 +174,10 @@ function renderComparison() {
         card.className = "carCard";
         card.style.backgroundColor = cardGray;
         
+        const modelContainer = document.createElement("div");
+        modelContainer.className = "modelContainer";
+        card.appendChild(modelContainer);
+        
         const title = document.createElement("h2");
         title.textContent = `${car.model}`;
         title.style.color = harvestOrange;
@@ -165,6 +229,8 @@ function renderComparison() {
         
         card.appendChild(removeBtn);
         comparisonContainer.appendChild(card);
+        
+        init3DModel(modelContainer, car.model);
     });
 }
 
